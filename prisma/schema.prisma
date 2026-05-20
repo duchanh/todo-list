@@ -1,0 +1,57 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Task {
+  id           String         @id @default(cuid())
+  title        String
+  note         String?
+  scheduleType ScheduleType
+  date         DateTime?
+  active       Boolean        @default(true)
+  createdAt    DateTime       @default(now())
+  updatedAt    DateTime       @updatedAt
+  assignees    TaskAssignee[]
+  completions  Completion[]
+}
+
+model TaskAssignee {
+  id     String @id @default(cuid())
+  taskId String
+  member Member
+  task   Task   @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, member])
+  @@index([member])
+}
+
+model Completion {
+  id          String    @id @default(cuid())
+  taskId      String
+  member      Member
+  date        DateTime
+  completed   Boolean   @default(false)
+  completedAt DateTime?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+  task        Task      @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([taskId, member, date])
+  @@index([date])
+  @@index([member, date])
+}
+
+enum Member {
+  husband
+  wife
+}
+
+enum ScheduleType {
+  daily
+  one_day
+}
