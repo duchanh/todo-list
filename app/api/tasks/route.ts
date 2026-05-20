@@ -13,6 +13,31 @@ const taskSchema = z.object({
   date: z.string().regex(/^\d{4}-\d{2}-\d{2}$/).nullable().optional(),
 });
 
+export async function GET() {
+  const tasks = await prisma.task.findMany({
+    include: {
+      assignees: {
+        orderBy: { member: "asc" },
+      },
+    },
+    orderBy: [{ active: "desc" }, { createdAt: "desc" }],
+  });
+
+  return NextResponse.json(
+    tasks.map((task) => ({
+      id: task.id,
+      title: task.title,
+      note: task.note,
+      scheduleType: task.scheduleType,
+      date: task.date?.toISOString().slice(0, 10) ?? null,
+      active: task.active,
+      assignees: task.assignees.map((assignee) => assignee.member),
+      createdAt: task.createdAt.toISOString(),
+      updatedAt: task.updatedAt.toISOString(),
+    })),
+  );
+}
+
 export async function POST(request: Request) {
   const payload = taskSchema.parse(await request.json());
   const uniqueAssignees = Array.from(new Set(payload.assignees));

@@ -6,8 +6,13 @@
   --muted: #6b7280;
   --border: #ded8cc;
   --panel: #fffdf8;
-  --accent: #176b63;
-  --accent-strong: #0f4f49;
+  --sidebar: #fffdf8;
+  --neutral-track: #ece7dc;
+  --accent: #E63946;
+  --accent-strong: #CC0000;
+  --primary: var(--accent);
+  --primary-strong: var(--accent-strong);
+  --active-bg: #fae9e6;
   --danger: #b42318;
 }
 
@@ -36,4 +41,12 @@ button {
 button:disabled {
   cursor: not-allowed;
   opacity: 0.65;
+}
+
+.rdp-root {
+  --rdp-accent-color: var(--accent);
+  --rdp-accent-background-color: var(--active-bg);
+  --rdp-day_button-border-radius: 6px;
+  --rdp-selected-border: 1px solid var(--accent);
+  font-size: 14px;
 }
